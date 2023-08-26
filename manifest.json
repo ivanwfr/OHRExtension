@@ -1,0 +1,56 @@
+{
+    "manifest_version"   :               3 ,
+    "name"               : "OHR checker v3",
+    "short_name"         : "ORH",
+    "description"        : "Manifest v3 ● onHeadersReceived checker",
+    "author"             : "Ivan Wellesz",
+
+    "version"            : "1.23.08.24",
+    "permissions"        : [
+        "activeTab",
+
+
+        "declarativeNetRequest",
+        "declarativeNetRequestFeedback",
+        "declarativeNetRequestWithHostAccess",
+
+
+        "scripting",
+
+        "tabs",
+
+        "webRequest"
+
+
+    ],
+    "host_permissions"   : [
+        "<all_urls>"
+    ],
+    "declarative_net_request": {
+        "rule_resources"      : [
+            {
+                "id"               : "rules1_SET",
+                "path"             : "rules1_SET.json",
+                "enabled"          :  true
+            },
+            {
+                "id"               : "rules2_REMOVE",
+                "path"             : "rules2_REMOVE.json",
+                "enabled"          :  false
+            }
+
+        ]
+    },
+    "icons"              : {
+        "32": "icon.png"
+    },
+    "background"         : {
+        "service_worker"  :   "background.js"
+
+    },
+    "action"             : {
+        "default_title"   : "OHR checker",
+        "default_popup"   : "popup.html",
+        "default_icon"    : "icon.png"
+    }
+}

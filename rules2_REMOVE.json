@@ -1,0 +1,20 @@
+[
+    {
+        "id"         : 2,
+        "priority"   : 2,
+        "condition"  : {
+            "urlFilter" : "|https",
+            "resourceTypes": ["script", "main_frame", "stylesheet"]
+        },
+        "action"     : {
+            "type"        : "modifyHeaders",
+            "responseHeaders"   : [
+                {
+                    "header"      : "Content-Security-Policy",
+                    "operation"   : "remove"
+
+                }
+            ]
+        }
+    }
+]
