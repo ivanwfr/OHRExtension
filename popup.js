@@ -7,7 +7,7 @@
 /* exported popup_js */
 
 const P_SCRIPT_ID       = "popup_js";
-const P_SCRIPT_TAG      =  P_SCRIPT_ID +" (230826:22h:26)"; /* eslint-disable-line no-unused-vars */
+const P_SCRIPT_TAG      =  P_SCRIPT_ID +" (230827:23h:00)"; /* eslint-disable-line no-unused-vars */
 
 /*}}}*/
 
@@ -39,6 +39,11 @@ let DOMContentLoaded_listener = function ()
 /*}}}*/
 
     // ┌───────────────────────────────────────────────────────────────────────┐
+    // │ MONITOR popup_showing_windowId                                        │
+    // └───────────────────────────────────────────────────────────────────────┘
+    if(chrome && chrome.runtime) chrome.runtime.connect({ name: "popup" });
+
+    // ┌───────────────────────────────────────────────────────────────────────┐
     // │ POPUP UI                                                              │
     // └───────────────────────────────────────────────────────────────────────┘
 /*_ p_UI_show_message {{{*/
@@ -58,7 +63,7 @@ let p_UI_show_message = function(message)
             p_status.id                = "p_status";
 
             p_status.style.margin      = "auto";
-            p_status.style.whiteSpace  = "pre-wrap";
+            p_status.style.whiteSpace  = "nowrap";
             p_status.style.color       = "#66FF66";
             p_status.style.textAlign   = "left";
 
@@ -136,11 +141,6 @@ let p_onMessage_CB = function(message,sender,response_handler=null) /* eslint-di
 };
 /*}}}*/
     chrome.runtime.onMessage.addListener( p_onMessage_CB );
-
-    // ┌───────────────────────────────────────────────────────────────────────┐
-    // │ MONITOR popup_showing_windowId                                        │
-    // └───────────────────────────────────────────────────────────────────────┘
-    if(chrome && chrome.runtime) chrome.runtime.connect({ name: "popup" });
 
 })();
 
