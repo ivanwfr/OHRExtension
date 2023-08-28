@@ -1,7 +1,7 @@
 <html>
 
  <head>
-  <title>OHR - onHeadersReceived checker popup_tag(230828:21h:56)</title>
+  <title>OHR - onHeadersReceived checker popup_tag(230828:23h:40)</title>
   <meta    id="meta_http_equiv"   http-equiv="content-type"  content="text/html" charset="utf-8">
   <script src="popup.js"></script>
  </head>
@@ -25,17 +25,17 @@
   pre    {      white-space :    pre-line; }
   div    {       text-align :        left; }
 
-  em     {      white-space :      nowrap; }
 
-  .container {
-    display                 : inline-grid;
-    padding                 : 0;
-  }
-
-  .container>* {
-    text-align              : center;
-  }
-
+  .container   {    display : inline-grid; }
+  .container   {  max-width :        30ch; }
+  .container   {   overflow :      hidden; }
+  .container   {    padding :           0; }
+  .container>* { text-align :      center; }
+  .container>em { text-align :      left; }
+  em { white-space :      nowrap; }
+/*
+  .container>* { max-width  :        28ch; }
+*/
   button {
     border-radius           : 1em;
     padding                 : 0 1em;
@@ -98,9 +98,11 @@ in <i>DevTools console</i></pre>
     <label for="reload" >reload      <input checked name="location" id="reload"      type="radio"   /> </label>
    <div>
 
+   <div class="container">
    <em    id="last_tabId"> </em>
 
    <em    id="last_url"  > </em>
+   <div>
 
  </body>
 

@@ -3,7 +3,7 @@
 
 ### ✔ [ZIP archive on GitHub](../../archive/master.zip)
 
-## `README.md` _TAG (230828:23h:18)
+## `README.md` _TAG (230828:23h:23)
 
 ### Logging HTTP Reponse headers during a reload of a `Browser Current Web Page`
 
@@ -23,7 +23,8 @@ in order to provide some clue for a bug tracking which is likely the way to go o
 everything else will have failed.
 
 I tried everything I could think of, even asking GPT 3.5 and Bing AI.
-*Those `AI` keep failing to grasp how `Manifest V3` ivalidates their suggested solutions.)*
+
+(*Those `AI` keep failing to grasp how `Manifest V3` ivalidates their suggested solutions.)*
 
 The CSP is precisely in the first Response received by the webRequest.onHeadersReceived listener.
 This is where the `declarativeNetRequest` or my `Manifest v2 Javascript dynamic filtering`

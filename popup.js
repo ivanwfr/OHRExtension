@@ -7,7 +7,7 @@
 /* exported popup_js */
 
 const P_SCRIPT_ID  = "popup_js";
-const P_SCRIPT_TAG =  P_SCRIPT_ID +" (230828:21h:39)"; /* eslint-disable-line no-unused-vars */
+const P_SCRIPT_TAG =  P_SCRIPT_ID +" (230828:23h:59)"; /* eslint-disable-line no-unused-vars */
 
 /*}}}*/
 
@@ -48,15 +48,31 @@ let popup_js = (function() {
     // │ POPUP UI                                                              │
     // └───────────────────────────────────────────────────────────────────────┘
     /*_ p_UI_show_message {{{*/
-    //const P_SHOW_MESSAGE_DELAY = 3000;
+    /*{{{*/
     let p_status;
 
+    /*}}}*/
     let p_UI_show_message = function(message)
     {
+        /* TAB ID {{{*/
+        let last_tabId_el  = document.getElementById("last_tabId");
+        if( last_tabId_el && message.last_tabId)
+        {
+            last_tabId_el.innerHTML = message.last_tabId+" <sup><i>(tabId)</i></sup>";
+        }
+        /*}}}*/
+        /* TAB URL {{{*/
+        let last_url_el    = document.getElementById("last_url"  );
 
-        if(message.last_tabId) document.getElementById("last_tabId").innerHTML = message.last_tabId+" <sup><i>(tabId)</i></sup>";
-        if(message.last_url  ) document.getElementById("last_url"  ).innerHTML = message.last_url                     ;
-        if(message.REPLY     ) {
+        if( last_url_el    && message.last_url)
+        {
+            last_url_el  .innerHTML = message.last_url                     ;
+            last_url_el  .title     = message.last_url                     ;
+        }
+        /*}}}*/
+        /* TAB STATUS {{{*/
+        if(message.REPLY     )
+        {
             /* [p_status] CREATE {{{*/
             if(!p_status )
             {
@@ -66,19 +82,23 @@ let popup_js = (function() {
                 p_status.style.margin      = "auto";
                 p_status.style.whiteSpace  = "nowrap";
                 p_status.style.textAlign   = "left";
+                p_status.style.maxWidth    = "28ch";
 
                 document.body.insertBefore(p_status, null); // i.e. at the end
             }
             /*}}}*/
+
+            p_status.title         = message.REPLY;
             p_status.innerHTML     = message.REPLY.replace("\n","<br>");
             p_status.style.color   = message.REPLY.includes(" NOT ") ? "red" : "#66FF66";
             p_status.style.display = "block";
-
         }
         else if(p_status)
         {
             p_status.style.display = "none";
+
         }
+        /*}}}*/
 
         /* Enable [reload_page button] ONLY WHEN CURRENT PAGE URL IS NOT MISSING*/
         let url_is_missing
