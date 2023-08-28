@@ -8,7 +8,7 @@
 
 const MANIFEST_VERSION  = (typeof chrome.tabs.executeScript == "undefined") ?  "v3" : "v2";
 const B_SCRIPT_ID       = "background_js";
-const B_SCRIPT_TAG      =  B_SCRIPT_ID +" manifest "+MANIFEST_VERSION+" (230828:01h:32)"; /* eslint-disable-line no-unused-vars */
+const B_SCRIPT_TAG      =  B_SCRIPT_ID +" manifest "+MANIFEST_VERSION+" (230828:22h:03)"; /* eslint-disable-line no-unused-vars */
 
 /*}}}*/
 
@@ -21,13 +21,32 @@ let background_js = (function() {
     let log = log_js.log;
 
     // ┌───────────────────────────────────────────────────────────────────────┐
-    // │ LISTENER onHeadersReceived                                            │
+    // │ ● LISTENER onHeadersReceived                          ● extraInfoSpec │
+    // ├───────────────────────────────────────────────────────────────────────┤
+    // ├ RESPONSE_HEADERS ● include the response headers in details            │
+    // ├───────────────────────────────────────────────────────────────────────┤
+    // ├         BLOCKING ● make the request synchronous to modify headers     │
+    // ├───────────────────────────────────────────────────────────────────────┤
+    // ├-   EXTRA_HEADERS ● https://developer.mozilla.org 🔍 onHeadersReceived │
     // └───────────────────────────────────────────────────────────────────────┘
-    const CALLER_OHR_LISTENER_TIMEOUT = "OHR LISTENER TIMEOUT";
-    const CSS_RESPONSEHEADERS         = "font-size:200%; border: 3px orange solid; border-radius:1em; padding:0 1em;";
-    const CSS_RIGHT_RECEIVED          = "font-size:200%; border: 3px white  solid; border-radius:1em; padding:0 1em; background: green;";
-    const CSS_WRONG_RECEIVED          = "font-size:200%; border: 3px white  solid; border-radius:1em; padding:0 1em; background:   red;";
     /*_ add_OHR_listener {{{*/
+/*{{{*/
+    const CALLER_OHR_LISTENER_TIMEOUT = "OHR LISTENER TIMEOUT";
+
+    const CSS_FONT_SIZE       = "font-size    : 200%;"             ;
+    const CSS_PADDING         = "padding      : 0 1em;"            ;
+
+    const CSS_BG_GREEN        = "background   : green;"            ;
+    const CSS_BG_RED          = "background   : red;"              ;
+
+    const CSS_BR_ORANGE       = "border       : 3px solid orange;";
+    const CSS_BR_RADIUS       = "border-radius: 1em;"             ;
+    const CSS_BR_WHITE        = "border       : 3px solid white;" ;
+
+    const CSS_RESPONSEHEADERS = CSS_FONT_SIZE+CSS_BR_ORANGE+CSS_BR_RADIUS+CSS_PADDING;
+    const CSS_RIGHT_RECEIVED  = CSS_FONT_SIZE+CSS_BR_WHITE +CSS_BR_RADIUS+CSS_PADDING+CSS_BG_GREEN;
+    const CSS_WRONG_RECEIVED  = CSS_FONT_SIZE+CSS_BR_WHITE +CSS_BR_RADIUS+CSS_PADDING+CSS_BG_RED;
+/*}}}*/
     let add_OHR_listener = function()
     {
         let blocking
@@ -35,9 +54,9 @@ let background_js = (function() {
 
         let extraInfoSpec
             = blocking
-            ? [   chrome.webRequest.OnHeadersReceivedOptions.RESPONSE_HEADERS // to include the response headers in the details object passed to the listener
-                , chrome.webRequest.OnHeadersReceivedOptions.BLOCKING         // to make the request synchronous, so you can modify request and response headers
-                , chrome.webRequest.OnHeadersReceivedOptions.EXTRA_HEADERS    // https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/API/webRequest/onHeadersReceived
+            ? [   chrome.webRequest.OnHeadersReceivedOptions.RESPONSE_HEADERS
+                , chrome.webRequest.OnHeadersReceivedOptions.BLOCKING
+                , chrome.webRequest.OnHeadersReceivedOptions.EXTRA_HEADERS
             ]
             : [   chrome.webRequest.OnHeadersReceivedOptions.RESPONSE_HEADERS
                 , chrome.webRequest.OnHeadersReceivedOptions.EXTRA_HEADERS
@@ -46,6 +65,7 @@ let background_js = (function() {
 
         log("● ORH LISTENER ADDED ("+(blocking ? "blocking":"not blocking")+"):");
         log(". chrome.webRequest.onHeadersReceived.addListener:");
+
         console.log(". extraInfoSpec", extraInfoSpec);
 
         chrome
@@ -56,6 +76,7 @@ let background_js = (function() {
                           , extraInfoSpec
                         );
     };
+    /*}}}*/
     /*_ del_OHR_listener {{{*/
     let del_OHR_listener = function()
     {
@@ -65,7 +86,6 @@ let background_js = (function() {
         log("● ORH LISTENER REMOVED:");
         chrome.webRequest.onHeadersReceived.removeListener(ohr_listener);
     };
-    /*}}}*/
     /*}}}*/
     /*_ ohr_listener {{{*/
     /*{{{*/
@@ -78,7 +98,7 @@ let background_js = (function() {
     /*}}}*/
     let ohr_listener = function(details)
     {
-        /* START COLLECTING {{{*/
+        /* ● START COLLECTING ● OR CONTINUE COLLECTING {{{*/
         if(!ohr_listener_check_timeout  )
         {
             last_count = 0;
@@ -95,66 +115,72 @@ let background_js = (function() {
         else {
             clearTimeout(ohr_listener_check_timeout);
         }
-        /*}}}*/
 
         last_count += 1;
 
-        /* LOOK FOR THE FIRST CSP_HEADER_NAME {{{*/
+        /*}}}*/
+        /* ● LOOK FOR THE FIRST [CSP_HEADER_NAME] {{{*/
         if(!last_csp)
         {
             for(let i=details.responseHeaders.length-1; i >= 0; --i)
             {
-                if(details.responseHeaders[i].name ==  CSP_HEADER_NAME)
-                {
+                if(details.responseHeaders[i].name !=  CSP_HEADER_NAME)
+                    continue;
 
-                    /* CSP NOT FROM FIRST RECEIVED HEADER */
-                    if(last_count > 1)
-                        console.log("details:", details);
+                /* GOT ONE ● CHECK IF FROM [FIRST RECEIVED HEADER] (i.e. top-most page frame) */
+                if(last_count > 1)
+                    console.log("details:", details);
 
-                    let csp_status
-                        = (last_count > 1)
-                        ?  "● CSP not from first received header"
-                        :     "✖  CSP from first received header"
-                    ;
+                let csp_status
+                    = (last_count > 1)
+                    ?  "CSP NOT from first received header"
+                    :  "CSP ... from first received header"
+                ;
 
-                    last_csp
-                        = {  csp_status
-                           , header_num     : last_count
-                           , reponseHeaders : "#"+i
-                           , url            : details.url
-                           , csp            : details.responseHeaders[i]
-                        };
+                /* LOG THIS AS THE [LAST RECEIVED CSP] */
+                last_csp
+                    = {  csp_status
+                       , header_num     : last_count
+                       , reponseHeaders : "#"+i
+                       , url            : details.url
+                       , csp            : details.responseHeaders[i]
+                    };
 
-                    break;
-                }
+                break;
             }
         }
         /*}}}*/
-
+        /* ● LOG THIS HEADER DETAILS {{{*/
         let csp_status = "CSP_RECEIVED "+(last_csp ? "✔":"-");
-                log( (last_count<10 ?" ":"")+last_count
-                   + " ["+csp_status+"] "
-                   + details.url
-                   );
- //     console.log(details);
 
+        log( (last_count<10 ?" ":"")+last_count
+             + " ["+csp_status+"] "
+             + details.url
+           );
+
+        /*}}}*/
+        // ┌───────────────────────────────────────────────────────────────────┐
+        // │ ● if CSP RECEIVED AND extraInfoSpec has blocking argument...      │
+        // │ ...return a webRequest.BlockingResponse                           │
+        // └───────────────────────────────────────────────────────────────────┘
+        /* ● POST NEXT TIMEOUT CHECK {{{*/
         ohr_listener_check_timeout
             =  setTimeout(check_DNR, CHECK_DEBOUNCE_MS, details.tabId, CALLER_OHR_LISTENER_TIMEOUT);
 
-      //return a webRequest.BlockingResponse if extraInfoSpec has blocking argument
+        /*}}}*/
     };
     /*}}}*/
     /*_ check_DNR {{{*/
     let check_DNR = async function(tabId,_caller)
     {
-        /* ● [CALLER_TAB_UPDATED_COMPLETE] had precedence over [CALLER_OHR_LISTENER_TIMEOUT] {{{*/
+        /* ● [TAB UPDATED COMPLETE] called before [OHR LISTENER TIMEOUT] {{{*/
         if(_caller == CALLER_OHR_LISTENER_TIMEOUT)
         {
             if(!ohr_listener_check_timeout)
                 return;
         }
         /*}}}*/
-        /* ● TERMINATE ON RELOAD OHR COLLECTING {{{*/
+        /* ● OHR COLLECTED AND TIMEOUT STILL PENDING (i.e. not on timeout) {{{*/
         if(ohr_listener_check_timeout)
         {
             console.groupEnd();
@@ -170,21 +196,17 @@ let background_js = (function() {
 
         /*}}}*/
         /* ● REPORT MATCHED RULES {{{*/
-
         log("▲ "+_caller+" ● "+last_count+" onHeadersReceived events received");
 
         /* ● csp_status ● header_num ● responseHeaders# ● url ● csp */
         log("CSP");
         console.log(last_csp);
-//      Object.keys(last_csp).forEach((key) => log("● "+key+" : "+last_csp[key]));
 
         if( tabId ) {
             try {
                 let rules = await chrome.declarativeNetRequest.getMatchedRules({tabId});
 
                 log("RULES MATCHED");
-//              log(" ● tabId=["+tabId+"] ● declarativeNetRequest ● getMatchedRules");
-
                 console.log("rules"                 , rules                 );
                 console.log("rules.rulesMatchedInfo", rules.rulesMatchedInfo);
 
@@ -193,43 +215,72 @@ let background_js = (function() {
         }
         else {
             log("...you must reload some page first");
+
         }
         /*}}}*/
     };
     /*}}}*/
-//  add_OHR_listener();
 
-    // ┌───────────────────────────────────────────────────────────────────────┐
-    // │ CONTENT PAGE SCRIPTING ● reload      ● chrome.scripting.executeScript │
-    // └───────────────────────────────────────────────────────────────────────┘
+    // ┌────────────────────────────────────────────────────────────────────────┐
+    // │ CONTENT PAGE SCRIPTING ● RELOADING    ● chrome.scripting.executeScript │
+    // └────────────────────────────────────────────────────────────────────────┘
     /*_ reload {{{*/
-    let reload = function(tabId,tab_url)
+    let reload = function(message)
     {
-  //    log("▲ "+last_count+" events received in last bunch");
-        if( tabId )
+        // ┌────────────────────────────────────────────────────────────────────┐
+        // │ RELOAD POPUP COMMAND            ● popup.js ● p_send_reload_message │
+        // └────────────────────────────────────────────────────────────────────┘
+        let { method="replace", tabId, url, logging=false } = message;
+
+        if(logging)
         {
-            log("RELOADING [tabId "+tabId+"]:");
-
-            /* remove query and fragment */ //FIXME
-//          let tab_path = log_js.get_url_path(tab_url);
-            let tab_path =                     tab_url ;
-
-            log("expecting  URL ▼");
-            log("............."+ tab_path);
-
-            /* CONTENT PAGE RELOAD SCRIPT */
-            /* ● (trying to get OPERA to forget its cache .. not working so far) */ //FIXME
-//          let b_page_reload = (   ) => { console.log("document.location.reload (  true   );"); document.location.reload (true); }; /* reload no-cache */
-//          let b_page_reload = (url) => { console.log("document.location.assign ('"+url+"');"); document.location.assign ( url); }; /* add to history  */
-            let b_page_reload = (url) => { console.log("document.location.replace('"+url+"');"); document.location.replace( url); }; /* ... or not      */
-
-            chrome.scripting.executeScript( { target: { tabId         }
-                                            ,   func:   b_page_reload
-                                            ,   args: [ tab_path      ]
-            });
+            log("● LOGGING location."+message.method+" COMMAND IN Content-Page's Devtools ●");
         }
         else {
-            log("...you must reload some page first");
+            log("RELOADING [tabId "+tabId+"] ( location."+message.method+" ):");
+
+            log("expecting  URL ▼");
+            log("............."+ url);
+        }
+
+        // ┌───────────────────────────────────────────────────────────────┐
+        // │ ● DEFINE CONTENT PAGE RELOAD SCRIPT                           │
+        // ├───────────────────────────────────────────────────────────────┤
+        // ├ trying to get OPERA to forget its cache ● NOT WORKING SO FAR  │
+        // ├───────────────────────────────────────────────────────────────┤
+        // ├ document.location.reload (true) ● reload no-cache             │
+        // ├ document.location.assign ( url) ● add to history              │
+        // ├ document.location.replace( url) ● ... or not                  │
+        // └───────────────────────────────────────────────────────────────┘
+        chrome.scripting.executeScript( { target: { tabId }
+                                        ,   func: reload_executeScript_func
+                                        ,   args: [ url, method, logging ]
+        });
+    };
+    /*}}}*/
+    /*_ reload_executeScript_func {{{*/
+    let reload_executeScript_func = function(url,method,logging)
+    {
+        // ┌───────────────────────────────────────────────────────────────────┐
+        // │ ● just log content-script command in Devtools console  ● popup.js │
+        // └───────────────────────────────────────────────────────────────────┘
+        if( logging ) {
+            const STYLE = "font-size:200%; border: 3px orange solid; border-radius:1em; padding:0 1em;";
+            switch(method) {
+            case "reload"  : console.log("%c document.location.reload (   true  );", STYLE); break;
+            case "assign"  : console.log("%c document.location.assign ('"+url+"');", STYLE); break;
+            case "replace" : console.log("%c document.location.replace('"+url+"');", STYLE); break;
+            }
+        }
+        // ┌───────────────────────────────────────────────────────────────────┐
+        // │ ● or execute  content-script command                              │
+        // └───────────────────────────────────────────────────────────────────┘
+        else {
+            switch(method) {
+            case "reload"  :                 document.location.reload (   true  );           break;
+            case "assign"  :                 document.location.assign (   url   );           break;
+            case "replace" :                 document.location.replace(   url   );           break;
+            }
         }
     };
     /*}}}*/
@@ -237,37 +288,36 @@ let background_js = (function() {
     // ┌───────────────────────────────────────────────────────────────────────┐
     // │ MONITOR popup_port_name                                               │
     // └───────────────────────────────────────────────────────────────────────┘
-/*_ b_monitor_popup_window {{{*/
-/*{{{*/
-let popup_port_name;
+    /*_ b_monitor_popup_window {{{*/
+    /*{{{*/
+    let popup_port_name;
 
-/*}}}*/
-let b_monitor_popup_window = function()
-{
-    // ┌───────────────────────────────────────────────────────────────────────┐
-    // │ ● initialized by b_message_onMessage_CB triggered by popup_js.       │
-    // │ ● sending message to popup_js should only happen when the id is set.  │
-    // └───────────────────────────────────────────────────────────────────────┘
-//  log("● monitoring popup connection");
+    /*}}}*/
+    let b_monitor_popup_window = function()
+    {
+        // ┌───────────────────────────────────────────────────────────────────────┐
+        // │ ● sending message to popup_js should only happen when the id is set.  │
+        // └───────────────────────────────────────────────────────────────────────┘
 
-    /* ● popup will connect when displayed */
-    chrome.runtime.onConnect.addListener(function(port) {
-        log_js.console_clear("runtime.onConnect");
-        log("● popup CONNECTED");
-        popup_port_name = port.name;
+        /* ● popup will connect when displayed */
+        chrome.runtime.onConnect.addListener(function(port) {
 
-        /* ● then it will disconnect when hidden */
-        if(port.name === "popup") {
-            port.onDisconnect.addListener(function() {
-                log("● popup CLOSED");
+            log_js.console_clear("runtime.onConnect");
+            log("● popup CONNECTED");
+            popup_port_name = port.name;
 
-                popup_port_name = 0;
-            });
-        }
-    });
+            /* ● then it will disconnect when hidden */
+            if(port.name === "popup") {
+                port.onDisconnect.addListener(function() {
+                    log("● popup CLOSED");
 
-};
-/*}}}*/
+                    popup_port_name = 0;
+                });
+            }
+        });
+
+    };
+    /*}}}*/
     b_monitor_popup_window();
 
     // ┌───────────────────────────────────────────────────────────────────────┐
@@ -276,35 +326,39 @@ let b_monitor_popup_window = function()
     /*_ b_onMessage_CB {{{*/
     let b_onMessage_CB = function(message,sender,response_handler=null) /* eslint-disable-line no-unused-vars */
     {
-        if(message.caller == B_SCRIPT_ID) return false;
-
-        let tabId = message.tabId || last_tabId;
-        let url   = message.url   || last_url;
+        if(message.caller == B_SCRIPT_ID) return false; // do not handle own message
+        /* query  ● POPUP JUST DISPLAYED {{{*/
+        if(     message.query ==  "tab")
+        {
+            b_tabs_query_active_tab(message, response_handler);
+        }
+        /*}}}*/
         /* reload ● POPUP BUTTON CLICKED {{{*/
-        if(message.cmd == "reload")
+        else if(message.cmd == "reload")
         {
             log("● RELOAD");
-            if(!tabId)
+
+            if(!message.tabId && !last_tabId)
             {
                 let  reply = "NO [tabId] YET TO RELOAD";
                 log( reply );
+                log("...you must manually reload some page first");
 
                 if( response_handler )
                     response_handler({ REPLY: reply , caller: "b_onMessage_CB" });
             }
             else {
-                if( response_handler )
-                    response_handler({ REPLY: "reloading "+log_js.get_url_path(url) , caller: "b_onMessage_CB" });
+                if(!message.tabId) message.tabId = last_tabId;
+                if(!message.url  ) message.url   = last_url;
 
-                add_OHR_listener();
-                reload(tabId, last_url);
+                if( response_handler )
+                    response_handler({ REPLY: message.method+" "+log_js.get_url_path(message.url) , caller: "b_onMessage_CB" });
+
+                if(!message.logging)
+                    add_OHR_listener();
+
+                reload( message );
             }
-        }
-        /*}}}*/
-        /* query ● POPUP JUST DISPLAYED {{{*/
-        else if(message.query == "tab")
-        {
-            b_tabs_query_active_tab(message, response_handler);
         }
         /*}}}*/
         return (response_handler != null); // whether to wait for an async response .. or not
@@ -318,41 +372,45 @@ let b_monitor_popup_window = function()
     /*_ b_send_REPLY_to_POPUP {{{*/
     let b_send_REPLY_to_POPUP = function()
     {
-        if( popup_port_name )
-        {
-            let REPLY
-                = "✔ "+last_count+" OHR events received\n"
-                + "✔ "
-                + (  last_csp
-                   ? last_csp.csp_status
-                   : "NO CSP")
-            ;
+        if(!popup_port_name ) return;
 
-            let message
-                = { last_tabId : "✔ "+last_tabId
-                    ,   last_url   : "✔ "+log_js.get_url_path(last_url)
-                    ,   REPLY
-                    ,   caller     : B_SCRIPT_TAG
-                };
-            chrome.runtime.sendMessage(message);
-        }
+        let REPLY
+            = "✔ "+last_count+" OHR events received\n"
+            + "✔ "
+            + (  last_csp
+               ? last_csp.csp_status
+               : "NO CSP")
+        ;
+
+        let message
+            = { last_tabId : "✔ "+last_tabId
+                ,   last_url   : "✔ "+log_js.get_url_path(last_url)
+                ,   REPLY
+                ,   caller     : B_SCRIPT_TAG
+            };
+        chrome.runtime.sendMessage(message);
     };
     /*}}}*/
 
     // ┌───────────────────────────────────────────────────────────────────────┐
-    // │ ACTIVE TAB QUERY                                          chrome.tabs │
+    // │ ACTIVE TAB QUERY              ● last_tabId ● last_url     chrome.tabs │
     // └───────────────────────────────────────────────────────────────────────┘
     /*_ b_tabs_query_active_tab {{{*/
     let b_tabs_query_active_tab = function(info={}, response_handler=null)
     {
-    if(info.caller || info.tabId) log_js.console_clear("b_tabs_query_active_tab");
-    log("QUERY ACTIVE TAB");
+        /* ● CLEAR CONSOLE (not when called from Devtools) */
+        if(info.caller || info.tabId) log_js.console_clear("b_tabs_query_active_tab");
 
-        /* [info] */
+        log("QUERY ACTIVE TAB");
+
+        /* LOG [info] */
         let caller = (info.caller || "onActivated");
+
         let s      = ""; Object.keys(info).forEach((key) => s += " ● "+key+" : "+info[key]);
+
         log(" ● "+caller+" ● "+s);
 
+        /* QUERY CURRENT TAB URL */
         if( MANIFEST_VERSION == "v3")
         {
             chrome.tabs.query({ currentWindow: true, active: true })
@@ -367,26 +425,25 @@ let b_monitor_popup_window = function()
         }
     };
     /*}}}*/
-/*_ b_settings_query_active_tab_url_callback {{{*/
+    /*_ b_settings_query_active_tab_url_callback {{{*/
+    /*{{{*/
+    let last_tabId;
+    let last_url;
 
-    let          last_tabId;
-    let          last_url;
-
+    /*}}}*/
     let b_settings_query_active_tab_url_callback = function(active_tab,response_handler)
     {
     log("▼");
 
- //     log("○ active_tab.id  ["+(active_tab && active_tab.id )+"]");
- //     log("○ active_tab.url ["+(active_tab && active_tab.url)+"]");
-
+        /* GETTING CURRENT TAB ID AND URL */
         last_tabId = active_tab &&  active_tab.id;
         last_url   = last_tabId && (active_tab.url || active_tab.pendingUrl);
 
         log("● last_tabId ["+last_tabId+"]");
         log("● last_url   ["+last_url  +"]");
 
-        if( response_handler )
-        {
+        /* REPLY TO POPUP QUERY */
+        if( response_handler ) {
             response_handler({ last_tabId
                              , last_url   : log_js.get_url_path(last_url)
                              , caller     : "b_settings_query_active_tab_url_callback"
@@ -397,22 +454,17 @@ let b_monitor_popup_window = function()
     chrome.tabs.onActivated.addListener( b_tabs_query_active_tab );
 
     // ┌───────────────────────────────────────────────────────────────────────┐
-    // │ TAB UPDATED                                               chrome.tabs │
+    // │ TAB UPDATED                   ● RELOADING                 chrome.tabs │
     // └───────────────────────────────────────────────────────────────────────┘
     const CALLER_TAB_UPDATED_COMPLETE = "EVENT onUpdated (complete)";
     /*_ b_tabs_onUpdated {{{*/
     let b_tabs_onUpdated = function(tabId, changeInfo, tab)
     {
     log("   ● UPDATED TAB ●   "+tab.url+" ["+(changeInfo.status||"")+"]");
-//  console.dir(changeInfo);
 
         if(!tab.url) return;
-//      last_tabId = tabId;
-//      last_url   = tab.url;
 
-//      log("● last_tabId ["+last_tabId+"]");
-//      log("● last_url   ["+last_url  +"]");
-
+        /* STOP COLLECTING HEADERS WHEN DOCUMENT HAS BEEN FULLY LOADED */
         if(ohr_listener_check_timeout && (changeInfo.status == "complete"))
             check_DNR(tabId, CALLER_TAB_UPDATED_COMPLETE);
     };
@@ -420,12 +472,13 @@ let b_monitor_popup_window = function()
     chrome.tabs.onUpdated.addListener( b_tabs_onUpdated );
 
     // ┌───────────────────────────────────────────────────────────────────────┐
-    // │ EXPORT TO CONSOLE                                                     │
+    // │ EXPORT TO CONSOLE             ● Devtools commands                     │
     // └───────────────────────────────────────────────────────────────────────┘
     /*  l = {{{*/
-    let l = function() {
-        let s = "";
-        Object.keys(b).forEach((f) => s += "\n● b."+f+"()");
+    let l = function()
+    {
+        let s = ""; Object.keys(b).forEach((f) => s += "\n● b."+f+"()");
+
         console.log(B_SCRIPT_ID+" CONSOLE COMMANDS:"+ s);
     };
     /*}}}*/
@@ -436,13 +489,11 @@ let b_monitor_popup_window = function()
         ,        reload_last_tabId : () => reload   ( last_tabId )
         ,                      log : log_js.log
         ,                        l
-//      , popup : () => chrome.windows.create({ url: "popup.html" , type: "popup" , width:400 , height:600 })
-//      , popup : async () => await chrome.action.enable(last_tabId)
-        , last_url : (arg) => {
-            last_url=arg;
-            let message =    { last_tabId
-                             , last_url   : log_js.get_url_path(last_url)
-                             , caller     : "Devtools"
+        , last_url   : (arg) => {
+            last_url =  arg;
+            let message = { last_tabId
+                          , last_url   : log_js.get_url_path(last_url)
+                          , caller     : "Devtools"
             };
             chrome.runtime.sendMessage(message);
         }
@@ -458,6 +509,7 @@ let b = background_js;
 /*{{{
 
 :!rm -rf _metadata
+
 rules1_SET.json
 rules2_REMOVE.json
 
@@ -469,6 +521,7 @@ popup.html
 manifest.json
 manifest_v2.json
 manifest_v3.json
+
 ../RTabsExtension/manifest.json
 
 }}}*/
