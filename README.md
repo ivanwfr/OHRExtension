@@ -3,18 +3,18 @@
 
 ### ✔ [ZIP archive on GitHub](../../archive/master.zip)
 
-## `README.md` _TAG (230828:23h:23)
+## `README.md` _TAG (230830:02h:07)
 
 ### Logging HTTP Reponse headers during a reload of a `Browser Current Web Page`
 
-#### Motivation #1:
-
+#### ● `Motivation #1`
 Looking for a `Content-Security-Policy` header in order to relax, customize or remove it.
 
-#### Motivation #2:
-
+#### ● `Motivation #2`
 Trying to understand why this test extension is working fine in both `Chrome` and `Edge`
 while `Opera` keeps missing to dispatch the top level frame Reponse Header.
+
+#### ✔ `Opera screenshots:` https://remotetabs.com/dev/OHRExtension/SCREENSHOTS/_index.html
 
 On some `mysterious occasions` Opera does the job as it should every time.
 It may have something to do with its `cache` invalidation internal policy...
