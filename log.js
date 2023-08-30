@@ -7,7 +7,7 @@
 /* exported log_js */
 
 const L_SCRIPT_ID       = "log_js";
-const L_SCRIPT_TAG      =  L_SCRIPT_ID +" (230828:00h:51)"; /* eslint-disable-line no-unused-vars */
+const L_SCRIPT_TAG      =  L_SCRIPT_ID +" (230829:19h:53)"; /* eslint-disable-line no-unused-vars */
 
 /*}}}*/
 const SEP_LINE = "● ──────────────────────────────────────────────────────────────────────────── ●";
@@ -20,8 +20,8 @@ let CSS_GREEN  = "padding: 0 1em; font-size:150%; color: #AADDAA;";
 
 let log = function(arg)
 {
-    if(!arg || arg.length < 18) console.log("%c"+        (arg || SEP_LINE), CSS_BORDER);
-    else if(   arg.length > 80) console.log("%c"+truncate(arg)            , CSS_GREEN );
+    if(!arg || arg.length <= 20) console.log("%c"+        (arg || SEP_LINE), CSS_BORDER);
+    else if(   arg.length >= 80) console.log("%c"+truncate(arg)            , CSS_GREEN );
     else                        console.log("%c"+         arg             , CSS_GREEN );
 };
 
