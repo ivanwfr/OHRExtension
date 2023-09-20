@@ -3,7 +3,7 @@
 
 ### ✔ [ZIP archive on GitHub](../../archive/master.zip)
 
-## `README.md` _TAG (230920:18h:55)
+## `README.md` _TAG (230920:21h:36)
 
 ### Logging HTTP Response headers during a reload of a `Browser Current Web Page`
 
@@ -59,14 +59,14 @@ in the `service-worker` background Devtools pane...
 -->
     .
     |-- images
-    |   `-- icon.png
+    |   |-- icon.png
+    |   `-- icon_64x64.png
     |
     |-- javascript
     |   |-- background.js
     |   |-- log.js
     |   `-- popup.js
     |
-    |-- OHRExtension.zip
     |-- README.md
     |-- background.html
     |-- manifest.json
