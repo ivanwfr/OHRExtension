@@ -5,7 +5,7 @@
     "description"        : "Manifest v3 ● onHeadersReceived checker",
     "author"             : "Ivan Wellesz",
 
-    "version"            : "230909",
+    "version"            : "23.9.20",
     "permissions"        : [
         "activeTab",
 

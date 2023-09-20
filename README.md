@@ -5,14 +5,14 @@
 
 ## `README.md` _TAG (230920:18h:55)
 
-### Logging HTTP Reponse headers during a reload of a `Browser Current Web Page`
+### Logging HTTP Response headers during a reload of a `Browser Current Web Page`
 
 #### ● `Motivation #1`
 Looking for a `Content-Security-Policy` header in order to relax, customize or remove it.
 
 #### ● `Motivation #2`
 Trying to understand why this test extension is working fine in both `Chrome` and `Edge`
-while `Opera` keeps missing to dispatch the top level frame Reponse Header.
+while `Opera` keeps missing to dispatch the top level frame Response Header.
 
 #### ✔ `Opera screenshots:` https://remotetabs.com/dev/OHRExtension/SCREENSHOTS/_index.html
 
@@ -24,10 +24,10 @@ everything else will have failed.
 
 I tried everything I could think of, even asking GPT 3.5 and Bing AI.
 
-(*Those `AI` keep failing to grasp how `Manifest V3` ivalidates their suggested solutions.)*
+(*Those `AI` keep failing to grasp how `Manifest V3` invalidates their suggested solutions.)*
 
 The CSP is precisely in the first Response received by the webRequest.onHeadersReceived listener.
-This is where the `declarativeNetRequest` or my `Manifest v2 Javascript dynamic filtering`
+This is where the `declarativeNetRequest` or my `Manifest v2 JavaScript dynamic filtering`
 can do their job.
 
 Another CSP could be located in the DOM header but it is not the one at stake here.
