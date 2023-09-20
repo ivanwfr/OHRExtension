@@ -5,7 +5,7 @@
     "description"        : "Manifest v2 ● onHeadersReceived checker",
     "author"             : "Ivan Wellesz",
 
-    "version"            : "1.23.08.24",
+    "version"            : "230909",
     "permissions"        : [
         "activeTab",
 
@@ -23,9 +23,9 @@
         "webRequestBlocking",
         "*://*/*"
     ],
-    "host_permissions"   : [
-        "<all_urls>"
-    ],
+
+
+
     "declarative_net_request": {
         "rule_resources"      : [
             {
@@ -42,15 +42,15 @@
         ]
     },
     "icons"              : {
-        "32": "icon.png"
+        "32": "images/icon.png"
     },
     "background"         : {
-        "scripts"         : [ "background.js" ]
+        "scripts"         : [ "javascript/background.js" ]
 
     },
     "browser_action"     : {
         "default_title"   : "OHR checker",
         "default_popup"   : "popup.html",
-        "default_icon"    : "icon.png"
+        "default_icon"    : "images/icon.png"
     }
 }

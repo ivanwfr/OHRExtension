@@ -1,0 +1,224 @@
+<html>
+<!-- head {{{-->
+ <head>
+  <title>onHeadersReceived SCREENSHOT</title>
+  <meta    id="meta_http_equiv"   http-equiv="content-type"  content="text/html" charset="utf-8">
+ </head>
+<!--}}}-->
+<!-- style {{{-->
+<style>
+body {
+ font-size           : 18px;
+ font-weight         : bold;
+ font-family         : "Comic sans ms";
+ text-align          : left;
+ background-color    : #666;
+ line-height         : 2em;
+}
+details {
+    margin           : 0.5em;
+    box-shadow       : 2px 2px 2px;
+    border           : 1px solid #FFF;
+    border-radius    : 1em;
+}
+.popup>summary { font-size: 200%; }
+summary {
+    cursor           : pointer;
+    background-color : #8888;
+    color            : black;
+    padding          : 0 1em;
+}
+
+                    summary { border-radius: 1em 1em 0   0  ; }
+details:not([open])>summary { border-radius: 1em            ; }
+img {
+ border-radius  : 0   0   1em 1em;
+ margin         : 0 0 0.5em 0.5em;
+ padding-bottom : 0.2em            ;
+}
+
+em {
+    display       : inline-block;
+    border        : 1px solid white;
+    border-radius :   1em;
+    padding       : 0 1em;
+}
+
+
+.good { background-color      : darkgreen; }
+.fail { background-color      :   darkred; }
+
+#grid    { display               : grid;    }
+#grid    { grid-template-columns : 1fr 1fr; }
+#grid h2 { grid-column-start     : 1;       }
+#grid h2 { grid-column-end       : 3;       }
+#grid h2 { text-align            : center;  }
+
+#grid>b  { color                 : white;   }
+#grid>b  { margin-top            : 1em;     }
+#grid>b  { grid-column-start     : 1;       }
+#grid>b  { grid-column-end       : 3;       }
+#grid>b  { text-align            : center;  }
+
+/*
+#grid *:nth-child( odd)>*   { text-align : right; }
+#grid *:nth-child(even)>*   { text-align :  left; }
+#grid *:nth-child( odd) img { float      : right; }
+#grid *:nth-child(even) img { float      :  left; }
+*/
+
+button {
+ margin        : auto;
+ border        : 2px black solid;
+ font-style    : oblique;
+ font-size     : 100%;
+ padding       : 0 0.5em;
+}
+#button_open_close_popup,
+#button_open_close { border-radius : 1em 1em 1em 1em; margin: auto 0; }
+#zoom_out          { border-radius : 1em 0em 0em 1em; margin: auto 0; }
+#zoom_off          { border-radius : 0em 0em 0em 0em; margin: auto 0; }
+#zoom_in           { border-radius : 0em 1em 1em 0em; margin: auto 0; }
+</style>
+<!--}}}-->
+<body>
+
+<!-- _index_html _TAG --><em style="float:right; color:#CCC1">(230920:18h:39)</em>
+
+<h1>OHRExtension screenshots <sup style="font-size:50%;"><a href="https://github.com/ivanwfr/OHRExtension">github</a></sup> </h2>
+
+<!-- toggle open-close all {{{-->
+<button id="button_open_close" onclick='document.querySelectorAll("DETAILS").forEach((el) => el.open = !el.open);' title="open-close all"
+>toggle open-close all</button>
+<!--}}}-->
+<!-- zoom {{{-->
+<script>
+const ZOOM_ARRAY = [ 30 , 60 , 80 ,100 ,120 ,150 ,180 ];
+let         zidx = parseInt(ZOOM_ARRAY.length / 2);
+let    next_zoom = function(sign,button)
+{
+  zidx = (sign == 0)
+   ? parseInt(ZOOM_ARRAY.length / 2)
+   : Math.max(0, Math.min((zidx + sign), ZOOM_ARRAY.length-1));
+
+//console.log("ZOOM_ARRAY["+zidx+"]=["+ZOOM_ARRAY[zidx]+"]");
+
+  if     (zidx ==  0                   ) button.style.backgroundColor = "red";
+  else if(zidx == (ZOOM_ARRAY.length-1)) button.style.backgroundColor = "red";
+  else document.querySelectorAll("BUTTON").forEach((el) => el.style.backgroundColor="");
+
+  document.querySelectorAll("IMG").forEach((el) => el.style.zoom = ZOOM_ARRAY[zidx]+"%");
+};
+</script>
+
+ <button id="zoom_out" title="zoom out all images" onclick='next_zoom(-1,this);'>zoom -</button
+><button id="zoom_off" title="zoom reset   images" onclick='next_zoom( 0,this);'>  ●   </button
+><button id="zoom_in"  title="ZOOM  IN ALL IMAGES" onclick='next_zoom( 1,this);'>zoom +</button>
+
+<!--}}}-->
+
+<!-- toggle open-close popup {{{-->
+<br>
+<button id="button_open_close_popup" onclick='document.querySelectorAll("DETAILS.popup").forEach((el) => el.open = !el.open);' title="open-close popup"
+>toggle open-close popup</button>
+<!--}}}-->
+
+ <div id="grid">
+<!--{{{
+:cd %:h
+:r !find %:h -type f -mtime -1
+
+:!start explorer %
+}}}-->
+
+   <h2>230920</h2>
+
+   <details class="popup"><summary class="good">Chrome  <sup>popup</sup></summary> <img src="Popup_Chrome.png"              /> </details>
+   <details class="popup"><summary class="good">Edge    <sup>popup</sup></summary> <img src="Popup_Edge.png"                /> </details>
+   <details class="popup"><summary class="good">Brave   <sup>popup</sup></summary> <img src="Popup_Brave.png"               /> </details>
+   <details class="popup"><summary class="good">Vivaldi <sup>popup</sup></summary> <img src="Popup_Vivaldi.png"             /> </details>
+   <details class="popup"><summary class="fail">Opera   <sup>popup</sup></summary> <img src="Popup_Opera.png"               /> </details>
+   <details class="popup"><summary class="fail">Firefox <sup>popup</sup></summary> <img src="Popup_Firefox.png"             /> </details>
+
+   <h2>230829</h2>
+
+   <details><summary class="good"> Opera_GOOD_GitHub         </summary> <img src="Opera_GOOD_GitHub.png"         /> </details>
+   <details><summary class="fail"> Opera_FAIL_GitHub         </summary> <img src="Opera_FAIL_GitHub.png"         /> </details>
+
+   <details><summary class="good">                           </summary>                                             </details>
+   <details><summary class="fail"> Opera_FAIL_GitHub_ivanwfr </summary> <img src="Opera_FAIL_GitHub_ivanwfr.png" /> </details>
+
+   <details><summary class="good"> Opera_GOOD_mozilla        </summary> <img src="Opera_GOOD_mozilla.png"        /> </details>
+   <details><summary class="fail">                           </summary>                                             </details>
+
+   <details><summary class="good">                           </summary>                                             </details>
+   <details><summary class="fail"> Opera_FAIL_StackOverflow  </summary> <img src="Opera_FAIL_StackOverflow.png"  /> </details>
+
+   <details><summary class="good">                           </summary>                                             </details>
+   <details><summary class="fail"> Opera_FAIL_remotetabs     </summary> <img src="Opera_FAIL_remotetabs.png"     /> </details>
+
+ </div>
+
+<!-- hide_empty_slots {{{-->
+<script>
+document.querySelectorAll("SUMMARY").forEach((el) => { if( !el.innerText.trim() ) el.style.visibility = "hidden"; } );
+
+</script>
+<!--}}}-->
+<!-- add_tooltips {{{-->
+<script>
+
+ const CONTAINS_CSP_HEADER = "\n● this one may contain the expected Content-security-policy header";
+ const GOOD_FIRST_RECEIVED = "\n● First Response-headers received has the page URL"+CONTAINS_CSP_HEADER;
+ const FAIL_FIRST_RECEIVED = "\n● First Response-headers received is not the expected URL";
+
+ const IMG_SRC_TO_TITLE = { "tooltips":""
+ , "Opera_FAIL_GitHub.png"         : "● Failed on GitHub site page"        + FAIL_FIRST_RECEIVED
+ , "Opera_FAIL_GitHub_ivanwfr.png" : "● Failed on GitHub repository page"  + FAIL_FIRST_RECEIVED
+ , "Opera_FAIL_StackOverflow.png"  : "● Failed on StackOverflow site page" + FAIL_FIRST_RECEIVED
+ , "Opera_FAIL_remotetabs.png"     : "● Failed on my site page"            + FAIL_FIRST_RECEIVED
+
+ , "Opera_GOOD_GitHub.png"         : "● Sometimes OK on GitHub site page"  + GOOD_FIRST_RECEIVED
+ , "Opera_GOOD_mozilla.png"        : "● Aways good on MDN page"            + GOOD_FIRST_RECEIVED
+
+ , "Popup_Chrome.png"              : "Chrome  manifest v3\n● onHeadersReceived \n● always gets its first header from a reload"
+ , "Popup_Edge.png"                : "Edge    manifest v3\n● onHeadersReceived \n● always gets its first header from a reload"
+ , "Popup_Brave.png"               : "Brave   manifest v3\n● onHeadersReceived \n● always gets its first header from a reload"
+ , "Popup_Vivaldi.png"             : "Vivaldi manifest v3\n● onHeadersReceived \n● always gets its first header from a reload"
+ , "Popup_Opera.png"               : "Opera   manifest v3\n● onHeadersReceived \n●  never gets its first header from a  reload"
+ , "Popup_Firefox.png"             : "Firefox manifest v3\n● onHeadersReceived \n●  never calls the listener"
+ };
+
+ document.querySelectorAll("IMG").forEach((el) => {
+  Object.keys( IMG_SRC_TO_TITLE ).forEach((key) => {
+   if(el.src.includes(key))
+    el.title = IMG_SRC_TO_TITLE[key];
+   el.addEventListener("click", (e) => e.target.parentElement.open = !e.target.parentElement.open);
+  });
+ });
+
+</script>
+<!--}}}-->
+
+
+<br>
+<h3>WebExtensions</h3>
+<a href="https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/API/declarativeNetRequest">declarativeNetRequest</a>
+<br>
+<a href="https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/API/webRequest/filterResponseData">webRequest.filterResponseData</a>
+<br>
+<a href="https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/Build_a_cross_browser_extension">Build_a_cross_browser_extension</a>
+
+<hr>
+<h3>Devtools</h3>
+<a href="https://developer.chrome.com/docs/devtools/overrides">overrides</a>
+<br>
+<a href="https://github.com/ChromeDevTools/rfcs/discussions/4">ChromeDevTools/rfcs</a>
+
+</body>
+</html>
+
+<!--
+$APROJECTS/Chrome_Web_Store/OHRExtension/SCREENSHOTS/_index.html
+
+-->

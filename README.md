@@ -3,7 +3,7 @@
 
 ### ✔ [ZIP archive on GitHub](../../archive/master.zip)
 
-## `README.md` _TAG (230830:02h:07)
+## `README.md` _TAG (230920:18h:55)
 
 ### Logging HTTP Reponse headers during a reload of a `Browser Current Web Page`
 
@@ -36,6 +36,14 @@ It looks like the `☑ Disable Cache` in `Opera Devtools`  does not solve the pr
 
 And location.reload(`true`), location.replace() or location.assign() can't do better.
 
+<!-- BROWSERS_popup {{{-->
+
+## Tested Browsers Popup
+
+> ![Browsers Popup](/SCREENSHOTS/BROWSERS_popup.png)
+
+<!--}}}-->
+
 ## `Load unpacked`
 
 This is a plain Manifest V3 Extension that can be loaded widh `Load unpacked` once the
@@ -46,22 +54,36 @@ This is a plain Manifest V3 Extension that can be loaded widh `Load unpacked` on
 The result summary will be displayed but all kinds of detailed logs can be analyzed
 in the `service-worker` background Devtools pane...
 
-*I intend to provide some screenshots in this Readme very soon*
-
 <!--
 }!!tree --dirsfirst    | sed -e 's/^/    /'
 -->
     .
+    |-- images
+    |   `-- icon.png
+    |
+    |-- javascript
+    |   |-- background.js
+    |   |-- log.js
+    |   `-- popup.js
+    |
+    |-- OHRExtension.zip
     |-- README.md
-    |-- background.js
-    |-- icon.png
-    |-- log.js
+    |-- background.html
     |-- manifest.json
     |-- manifest_v2.json
     |-- manifest_v3.json
+    |-- manifest_v3_Firefox.json
     |-- popup.html
-    |-- popup.js
     |-- rules1_SET.json
     `-- rules2_REMOVE.json
+    
+
+<!-- SCREENSHOTS {{{-->
+
+## See `SCREENSHOTS/_index.html`
+
+> ![SCREENSHOTS](/SCREENSHOTS/_index.png)
+
+<!--}}}-->
     
 ```

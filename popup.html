@@ -1,64 +1,65 @@
+<!DOCTYPE html>
 <html>
-
  <head>
-  <title>OHR - onHeadersReceived checker popup_tag(230828:23h:40)</title>
+  <title>OHR - onHeadersReceived checker popup_tag(230920:17h:07)</title>
   <meta    id="meta_http_equiv"   http-equiv="content-type"  content="text/html" charset="utf-8">
-  <script src="popup.js"></script>
+  <script src="javascript/popup.js"></script>
  </head>
-
+<!-- STYLE {{{-->
  <style>
+  /* HTML BODY DIV {{{*/
+  HTML   {           height :   min-content; }
 
-  /* LAYOUT */
-  html   {           height : min-content; }
-  pre    {            width :        30ch; }
-  pre    {            margin:  0.5em auto; }
+  BODY   {           margin :           0px; }
+  BODY   {           padding:         0.5em; }
+  BODY   {           border : solid red 1px; }
+  BODY   { background-color :      DarkBlue; }
+  BODY   {            color :        Salmon; }
+  BODY   {        font-size :          16px; }
+  BODY   {       text-align :        center; }
 
-  /* COLOR */
-  body   {            color :      Salmon; }
-  body   { background-color :    DarkBlue; }
+  DIV    {       text-align :          left; }
+  /*}}}*/
+  /* BUTTON {{{*/
+  button {           margin :        auto; }
+  button {    border-radius :         1em; }
+  button {            width :        100%; }
+  button {          padding :       0 1em; }
+  button { background-color : transparent; }
   button {            color :         Red; }
-  button {        font-size :        18px; }
+  button {        font-size :        16px; }
+  button {      line-height :       1.5em; }
 
-  /* TEXT */
-  body   {        font-size :        18px; }
-  body   {       text-align :      center; }
+  /*}}}*/
+  /* INPUT LABEL {{{*/
+  label { display           :    inline-block; }
+  label { border            : 2px solid #DDD8; }
+  label { border-radius     :           1.0em; }
+  label { padding           :     0.1em 1.0em; }
+  label { color             :            gray; }
+  label { cursor            :         pointer; }
+  label { user-select       :            none; }
+
+  /*}}}*/
+  /* PRE {{{*/
+  pre    {           margin :  0.5em auto; }
+  pre    {            width :        30ch; }
+  pre    {        font-size :        14px; }
   pre    {      white-space :    pre-line; }
-  div    {       text-align :        left; }
+  pre    {      user-select :        none; }
+  pre em {            color :        cyan; }
 
+  /*}}}*/
+  /* EM {{{*/
+      em {          padding :       0 1em; }
+      em {         overflow :      hidden; }
+      em {      white-space :      nowrap; }
+  pre em {      user-select :        text; }
+  pre em {    border        :   1px inset; }
+  pre em {    border-radius :       1.0em; }
 
-  .container   {    display : inline-grid; }
-  .container   {  max-width :        30ch; }
-  .container   {   overflow :      hidden; }
-  .container   {    padding :           0; }
-  .container>* { text-align :      center; }
-  .container>em { text-align :      left; }
-  em { white-space :      nowrap; }
-/*
-  .container>* { max-width  :        28ch; }
-*/
-  button {
-    border-radius           : 1em;
-    padding                 : 0 1em;
-/*
-    width                   : 100%;
-*/
-    text-align              : center;
-    margin                  : auto;
-  }
-
-  label {
-   display                  : inline-block;
-   padding                  : 0.1em 1.0em;
-   border                   : 2px solid #DDD8;
-   border-radius            : 1.0em;
-/*
-   margin                   : 0.5em auto;
-*/
-   user-select              : none;
-   cursor                   : pointer;
-   color                    : gray;
-  }
-
+  /*}}}*/
+  /* ::checked {{{*/
   label:has( input[type="checkbox"]:checked ) {
      background-color       : #001;
      border-color           : red;
@@ -71,41 +72,106 @@
      color                  : white;
   }
 
+  /*}}}*/
+  /* .container {{{*/
+  .container   {    display : inline-grid; }
+  .container   {  max-width :        30ch; }
+  .container   {   overflow :      hidden; }
+  .container   {    padding :           0; }
+  .container>* { text-align :       right; }
+  .container>em { text-align:        left; }
+
+  .small { font-size        :         75%; }
+  .small { line-height      :         1em; }
+  .small { border           :        none; }
+
+ /*}}}*/
+ /* #p_status {{{*/
+ #p_status { margin     :   auto; }
+ #p_status { max-width  :   26ch; }
+ #p_status { text-align :   left; }
+ #p_status { overflow   : hidden; }
+
+ /*}}}*/
  </style>
-
+<!--}}}-->
  <body>
-
+   <img style="float:right;" src="images/icon.png"/>
    <h2>ORH Checker</h2>
-
    <b id="manifest">●</b>
+<!-- PRE INTRO {{{-->
+<pre
+    title  ="
+Listening to 'onHeadersReceived' events…
 
-<pre>Reload current page to
+● Filtering details.responseHeaders
+looking for the one named 'Content-Security-Policy'.
+
+✔ It works fine with Chrome, Edge, Brave and Vivaldi.
+
+✕ But, in Opera, the first top-frame received Header can be missing…
+
+&#x1F914; …it looks like as if it is dispatched only on first session-page-load ?
+
+✕ …we cannot filter this response headers by reloading a page!"
+>Reload the current page to
 check <b>onHeadersReceived</b>
-event details
-in <i>DevTools console</i></pre>
-
+event details in service_sorker console:
+<em title="Yes, this is the Opera extension-page url
+● copy this url
+● then paste it 
+● into a new browser window
+● to see what happens in the console
+● on a 'Reload Page' button click">chrome://extensions</em>
+</pre>
+<!--}}}-->
+<!-- RELOAD PAGE BUTTON {{{-->
    <div class="container">
-    <button disabled                                                id="reload_page" type="button">Reload Page</button>
-   <br>
-    <label title="● just log content-script command
-● in Content-Page's Devtools console
-✔ Works fine with Chrome and Edge
- ✕ but nothing happens in Opera ?!"
-           for="logging">just logging<input                         id ="logging"    type="checkbox"/> </label>
-   <br>
-    <label for="assign" >assign      <input         name="location" id="assign"      type="radio"   /> </label>
-    <label for="replace">replace     <input         name="location" id="replace"     type="radio"   /> </label>
-    <label for="reload" >reload      <input checked name="location" id="reload"      type="radio"   /> </label>
+    <button disabled
+    style  ="text-align:center;"
+    id     ="reload_page"
+    type   ="button"
+    title  ="
+Reloads the current page
+using the selected location method bellow"
+    ><b>&#x27F3;</b> &nbsp; Reload Page &nbsp; <b>&#x27F3;</b>
+    </button>
    <div>
+<!--}}}-->
+<!-- JUST LOGGING CHECKBOX{{{-->
+   <div class="container">
+    <label for="reload"  title="reload(true) ● NO CACHE"       class="small">reload  <input checked name="location" id="reload"      type="radio"   /> </label>
+    <label for="replace" title="Navigate to  ● IGNORE history" class="small">replace <input         name="location" id="replace"     type="radio"   /> </label>
+    <label for="assign"  title="Navigate to  ● ADD TO history" class="small">assign  <input         name="location" id="assign"      type="radio"   /> </label>
+    <label title="Just logging
 
+✕ Do not reload:
+&ndash; just LOG content-script commands ● ~= executeScript
+&ndash; in this page's Devtools Console.
+
+&#x26A0; Do not forget to:
+&ndash; select 'ORH Checker'
+&ndash; (the current one is not always the top entry)
+&ndash; after a first Just logging ● Reload-Page ● click
+&ndash; in this page DevTools console Context
+&ndash; from the Devtools drop-down menu
+&ndash; to see the right logs
+&ndash; from this content-page extension-thread"
+           for="logging"              >just logging<input                         id ="logging"    type="checkbox"/> </label>
+   </div>
+<!--}}}-->
+<!-- TAB-ID URL {{{-->
    <div class="container">
    <em    id="last_tabId"> </em>
 
    <em    id="last_url"  > </em>
-   <div>
+   </div>
+<!--}}}-->
+<!-- TAB STATUS {{{-->
+   <p id="p_status"> </p>
 
+<!--}}}-->
  </body>
-
 </html>
 <!--
 vim: sw=1

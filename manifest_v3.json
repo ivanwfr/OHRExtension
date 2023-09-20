@@ -5,14 +5,14 @@
     "description"        : "Manifest v3 ● onHeadersReceived checker",
     "author"             : "Ivan Wellesz",
 
-    "version"            : "1.23.08.24",
+    "version"            : "230909",
     "permissions"        : [
         "activeTab",
 
 
-        "declarativeNetRequest",
-        "declarativeNetRequestFeedback",
+
         "declarativeNetRequestWithHostAccess",
+        "declarativeNetRequestFeedback",
 
 
         "scripting",
@@ -38,19 +38,18 @@
                 "path"             : "rules2_REMOVE.json",
                 "enabled"          :  false
             }
-
         ]
     },
     "icons"              : {
-        "32": "icon.png"
+        "32": "images/icon.png"
     },
     "background"         : {
-        "service_worker"  :   "background.js"
+        "service_worker"  :   "javascript/background.js"
 
     },
     "action"             : {
         "default_title"   : "OHR checker",
         "default_popup"   : "popup.html",
-        "default_icon"    : "icon.png"
+        "default_icon"    : "images/icon.png"
     }
 }
